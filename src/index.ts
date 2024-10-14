@@ -1,5 +1,5 @@
 import { slp, wp } from "./priceData";
-import get from "lodash/get";
+// import _ from "lodash";
 
 const priceConstants = {
   private: {
@@ -30,16 +30,17 @@ const calculatePrice = (
   consumptionKwH: number,
   type: "commercial" | "private" | "heat"
 ): PriceResultType | null => {
-  let [workingPricePerKwH, basePricePerKwH] = get(slp, zipCode, []);
+  const dataSource = type != "heat" ? slp : wp;
+  let [workingPricePerKwH, basePricePerKwH] = dataSource[zipCode] || [];
+  console.log("Prices", basePricePerKwH);
   let vatFactor = type == "commercial" ? 1 : VAT;
   if (typeof workingPricePerKwH == "undefined") {
     return null;
   }
-  console.log(workingPricePerKwH, basePricePerKwH, zipCode);
 
   // calculate "Arbeitspreis"
-  const structuringBudget = get(priceConstants, [type, "structuringBudget"]);
-  const producingPrice = get(priceConstants, [type, "producer"]);
+  const structuringBudget = priceConstants[type]["structuringBudget"];
+  const producingPrice = priceConstants[type]["producer"];
   let workingPricePerKwHNet =
     parseFloat(workingPricePerKwH) +
     (structuringBudget + producingPrice) *
@@ -47,10 +48,9 @@ const calculatePrice = (
   let workingPricePerKwHGross =
     Math.round(workingPricePerKwHNet * vatFactor * 100) / 100;
 
-  console.log(Math.round(basePricePerKwH * 100) / 100);
   // Calc Grundpreis
   const basePricePerKwHGross =
-    Math.round(basePricePerKwH * vatFactor * 100) / 100;
+    Math.round(parseFloat(basePricePerKwH) * vatFactor * 100) / 100;
 
   // Monthly Fee
   const yearlyConsumption =
@@ -73,16 +73,55 @@ const calculatePrice = (
 async function main() {
   function logSubmit(event) {
     event.preventDefault();
-    console.log("Submit login");
+    event.stopPropagation();
+
+    let form = {
+      energyConsumer: (
+        document.getElementById(
+          "form-field-energy-consumer"
+        ) as HTMLInputElement
+      ).value as "commercial" | "private" | "heat",
+      zipCode: (
+        document.getElementById("form-field-zip-code") as HTMLInputElement
+      ).value,
+      consumption: (
+        document.getElementById(
+          "form-field-yearly-consumption"
+        ) as HTMLInputElement
+      ).value,
+    };
+    let prices = calculatePrice(
+      form.zipCode,
+      parseInt(form.consumption),
+      form.energyConsumer
+    );
+
+    let pricesNet = form.energyConsumer == "commercial";
+
+    document.getElementById("working-price-text").innerHTML = `${
+      pricesNet ? "netto" : "brutto"
+    } ${prices.arbeitspreis} Cent/kWh`;
+    document.getElementById("base-price-text").innerHTML = `${
+      pricesNet ? "netto" : "brutto"
+    } ${prices.grundpreis} EUR/Jahr`;
+    document.getElementById(
+      "monthly-fee-text"
+    ).innerHTML = `brutto ${prices.abschlag} EUR`;
+    document.getElementById("refund-text").innerHTML = `${
+      pricesNet ? "netto" : "brutto"
+    } ${prices.erstattung} Cent/kWh`;
+    document.getElementById("cost-calc-table").style.display = "block";
   }
 
   const form = document.getElementById("wf-form-Fairster-Calculation");
   form.addEventListener("submit", logSubmit);
-
-  console.log("Initialize Forms");
 }
 
-main();
+try {
+  main();
+} catch (e) {
+  console.error(e.message);
+}
 
 /**
  *  $this->AdministrativeSurcharge                  = ($this->ProducingPrice + $this->StructuringBudget) * self::ADMINISTRATIVE_SURCHARGE_FACTOR;
