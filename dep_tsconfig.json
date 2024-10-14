@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "module": "UMD",
+    "esModuleInterop": true,
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": "./src",
+    // "types": [
+    //   "node",
+    //   "lodash",
+    //   "express",
+    //   "@prisma",
+    //   "@prisma/client",
+    //   "prisma",
+    // ]
+  },
+  "include": [
+    "./src/index.ts",
+    "/node_modules/.prisma/client/index.d.ts",
+  ],
+  "lib": [
+    "es2015"
+  ]
+}

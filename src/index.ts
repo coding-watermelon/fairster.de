@@ -1,5 +1,5 @@
 import { slp, wp } from "./priceData";
-import _ from "lodash";
+import get from "lodash/get";
 
 const priceConstants = {
   private: {
@@ -30,7 +30,7 @@ const calculatePrice = (
   consumptionKwH: number,
   type: "commercial" | "private" | "heat"
 ): PriceResultType | null => {
-  let [workingPricePerKwH, basePricePerKwH] = _.get(slp, zipCode, []);
+  let [workingPricePerKwH, basePricePerKwH] = get(slp, zipCode, []);
   let vatFactor = type == "commercial" ? 1 : VAT;
   if (typeof workingPricePerKwH == "undefined") {
     return null;
@@ -38,8 +38,8 @@ const calculatePrice = (
   console.log(workingPricePerKwH, basePricePerKwH, zipCode);
 
   // calculate "Arbeitspreis"
-  const structuringBudget = _.get(priceConstants, [type, "structuringBudget"]);
-  const producingPrice = _.get(priceConstants, [type, "producer"]);
+  const structuringBudget = get(priceConstants, [type, "structuringBudget"]);
+  const producingPrice = get(priceConstants, [type, "producer"]);
   let workingPricePerKwHNet =
     parseFloat(workingPricePerKwH) +
     (structuringBudget + producingPrice) *

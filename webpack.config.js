@@ -1,4 +1,5 @@
 const path = require("path");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 module.exports = {
   entry: "./src/index.ts",
   mode: "production",
@@ -18,6 +19,14 @@ module.exports = {
         use: "ts-loader",
         exclude: /node_modules/,
       },
+    ],
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new UglifyJsPlugin({
+        include: /\.min\.js$/,
+      }),
     ],
   },
 };
