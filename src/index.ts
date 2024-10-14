@@ -78,6 +78,8 @@ async function main() {
 
   const form = document.getElementById("wf-form-Fairster-Calculation");
   form.addEventListener("submit", logSubmit);
+
+  console.log("Initialize Forms");
 }
 
 main();
