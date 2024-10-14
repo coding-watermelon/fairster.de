@@ -25,7 +25,7 @@ type PriceResultType = {
   abschlag: number;
   erstattung: number;
 };
-export const calculatePrice = (
+const calculatePrice = (
   zipCode: string,
   consumptionKwH: number,
   type: "commercial" | "private" | "heat"
@@ -69,6 +69,18 @@ export const calculatePrice = (
     erstattung: refund,
   };
 };
+
+async function main() {
+  function logSubmit(event) {
+    event.preventDefault();
+    console.log("Submit login");
+  }
+
+  const form = document.getElementById("wf-form-Fairster-Calculation");
+  form.addEventListener("submit", logSubmit);
+}
+
+main();
 
 /**
  *  $this->AdministrativeSurcharge                  = ($this->ProducingPrice + $this->StructuringBudget) * self::ADMINISTRATIVE_SURCHARGE_FACTOR;
