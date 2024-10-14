@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "outFile": "out/bundle.js",
+    "module": "CommonJS",
+    "sourceMap": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}
