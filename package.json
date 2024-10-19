@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "buildCss": "sass src/scss/index.scss dist/index.css",
+    "watchCss": "sass --watch src/scss/index.scss dist/index.css",
     "build": "webpack",
     "start": "tsc && node dist/index",
     "dev": "tsnd --respawn src/index.ts",
@@ -16,7 +18,9 @@
     "ts-node-dev": "^2.0.0"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "lodash": "^4.17.21",
+    "sass": "^1.80.3",
     "ts-loader": "^9.5.1",
     "ts-proto": "^1.167.9",
     "tsc": "^2.0.4",

@@ -1,0 +1,36 @@
+@use 'header';
+@use 'radioInput';
+
+$fairster-blue: #3939b8;
+$fairster-blue-light: #3939b890;
+
+.plan-button:active:not(.disabled) {
+  background: $fairster-blue-light;
+}
+.plan-button:hover:not(.disabled) {
+  background: $fairster-blue-light;
+}
+
+
+#plan-list-selector::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#plan-list-selector {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+#plan-list-selector {
+  scroll-snap-type: x mandatory;
+}
+
+#plan-list-selector > div {
+  scroll-snap-align: start;
+}
+
+a.disabled {
+  border-color: gray;
+  color: gray;
+}

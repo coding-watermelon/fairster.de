@@ -1,5 +1,6 @@
 import { slp, wp } from "./priceData";
 // import _ from "lodash";
+import { init } from "./contractPage";
 
 const priceConstants = {
   private: {
@@ -71,6 +72,7 @@ const calculatePrice = (
 };
 
 async function main() {
+  init();
   function logSubmit(event) {
     event.preventDefault();
     event.stopPropagation();

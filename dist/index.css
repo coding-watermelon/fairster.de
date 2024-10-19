@@ -1,0 +1,32 @@
+.plan-button:active:not(.disabled) {
+  background: rgba(57, 57, 184, 0.5647058824);
+}
+
+.plan-button:hover:not(.disabled) {
+  background: rgba(57, 57, 184, 0.5647058824);
+}
+
+#plan-list-selector::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#plan-list-selector {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+#plan-list-selector {
+  scroll-snap-type: x mandatory;
+}
+
+#plan-list-selector > div {
+  scroll-snap-align: start;
+}
+
+a.disabled {
+  border-color: gray;
+  color: gray;
+}
+
+/*# sourceMappingURL=index.css.map */
