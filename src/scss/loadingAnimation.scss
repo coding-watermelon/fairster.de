@@ -1,0 +1,40 @@
+@mixin animation-delay {
+  @for $i from 1 through 8 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * .1}s;
+    }
+  }
+}
+
+.logo-deconstructed {
+  @include animation-delay();
+}
+
+.letter {
+  @include animation-delay();
+  position: relative;
+  animation: bounce 0.6s infinite alternate;
+}
+
+#loading-cover.hide {
+  animation: hide 0.8s forwards;
+}
+
+@keyframes bounce {
+  0% {
+      transform: translateY(0);
+  }
+  100% {
+      transform: translateY(-20px);
+  }
+}
+
+@keyframes hide {
+  0% {
+      opacity: 100%;
+    }
+    100% {
+      opacity: 0%;
+      display: none;
+  }
+}

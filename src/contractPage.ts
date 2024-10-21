@@ -1,3 +1,4 @@
+const apiUrl = "http://localhost:3333";
 const availableContractPlans = [
   {
     id: "1st-tarif-tile",
@@ -18,8 +19,89 @@ const availableContractPlans = [
 const contractState = {
   selectedPlan: "2nd-tarif-tile",
 };
+let contractNameElement: HTMLElement;
+let contractAddressElement: HTMLElement;
+let contractDeliveryAddressElement: HTMLElement;
+let contractMeterIdElement: HTMLElement;
 let planListElement: HTMLElement;
 let selectedPlanNameElement: HTMLElement;
+
+type DataResponseType = {
+  id: string;
+  email: string;
+  plan: string;
+  zipCode: string;
+  yearlyConsumptionKwH: number;
+  user: {
+    id: string;
+    email: string;
+    invoiceAddress: string;
+    firstName: string;
+    lastName: string;
+    deliveryAddress: string;
+    meterId: string;
+  };
+};
+
+const onSubmit = async () => {
+  console.log("On Submit", contractState);
+};
+
+export async function init() {
+  // Do stuff only if on contract-page
+  if (window.location.pathname !== "/contract") return;
+
+  let hasSeenLoadingForAtLeastTwoSeconds = false;
+  console.log("Init contract page");
+  // Load Contract Details
+  setTimeout(() => {
+    hasSeenLoadingForAtLeastTwoSeconds = true;
+  }, 2000);
+  await loadContractDetails();
+
+  // initialize interface
+  planListElement = document.getElementById("plan-list-selector");
+  selectedPlanNameElement = document.getElementById("selected-plan-title-text");
+  updatePlanList(true);
+
+  while (!hasSeenLoadingForAtLeastTwoSeconds) {
+    await wait(200);
+  }
+  document.getElementById("loading-cover").classList.add("hide");
+
+  console.log("Done loading");
+
+  // Register events
+  document
+    .getElementById("plan-nav-left")
+    .addEventListener("click", navigatePlans(-1));
+  document
+    .getElementById("plan-nav-right")
+    .addEventListener("click", navigatePlans(1));
+  document
+    .getElementById("contract-form-submit")
+    .addEventListener("click", onSubmit);
+}
+
+const loadContractDetails = async () => {
+  let offerId = window.location.hash;
+  offerId = offerId.slice(1, offerId.length);
+
+  const contractDataResponse = await fetch(`${apiUrl}/offer/${offerId}`, {});
+  const contractData: DataResponseType = await contractDataResponse.json();
+
+  contractNameElement = document.getElementById("contract-data-name");
+  contractAddressElement = document.getElementById("contract-data-address");
+  contractDeliveryAddressElement = document.getElementById(
+    "contract-data-delivery-address"
+  );
+  contractMeterIdElement = document.getElementById("contract-data-meter-id");
+
+  contractNameElement.innerHTML = `${contractData.user.firstName} ${contractData.user.lastName}`;
+  contractAddressElement.innerHTML = contractData.user.invoiceAddress;
+  contractDeliveryAddressElement.innerHTML = contractData.user.deliveryAddress;
+  contractMeterIdElement.innerHTML = contractData.user.meterId;
+};
 
 const updatePlanList = (initial: boolean) => {
   availableContractPlans.map(({ id, buttonSelectorId, name }, index) => {
@@ -52,6 +134,7 @@ const selectPlan = (planId: string) => (event) => {
 };
 
 const navigatePlans = (direction: number) => (event) => {
+  console.log("Navigate plan", direction);
   if (!planListElement) return;
   const listWidth = planListElement.offsetWidth;
   const currentScrollPosition = planListElement.scrollLeft;
@@ -62,19 +145,6 @@ const navigatePlans = (direction: number) => (event) => {
   });
 };
 
-export async function init() {
-  console.log("Initialize Contract page");
-
-  // Register events
-  document
-    .getElementById("plan-nav-left")
-    .addEventListener("click", navigatePlans(-1));
-  document
-    .getElementById("plan-nav-right")
-    .addEventListener("click", navigatePlans(1));
-
-  planListElement = document.getElementById("plan-list-selector");
-  selectedPlanNameElement = document.getElementById("selected-plan-title-text");
-
-  updatePlanList(true);
-}
+const wait = async (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};

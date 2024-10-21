@@ -1,9 +1,95 @@
+.logo-deconstructed:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.logo-deconstructed:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.logo-deconstructed:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.logo-deconstructed:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.logo-deconstructed:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.logo-deconstructed:nth-child(6) {
+  animation-delay: 0.6s;
+}
+.logo-deconstructed:nth-child(7) {
+  animation-delay: 0.7s;
+}
+.logo-deconstructed:nth-child(8) {
+  animation-delay: 0.8s;
+}
+
+.letter {
+  position: relative;
+  animation: bounce 0.6s infinite alternate;
+}
+.letter:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.letter:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.letter:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.letter:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.letter:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.letter:nth-child(6) {
+  animation-delay: 0.6s;
+}
+.letter:nth-child(7) {
+  animation-delay: 0.7s;
+}
+.letter:nth-child(8) {
+  animation-delay: 0.8s;
+}
+
+#loading-cover.hide {
+  animation: hide 0.8s forwards;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-20px);
+  }
+}
+@keyframes hide {
+  0% {
+    opacity: 100%;
+  }
+  100% {
+    opacity: 0%;
+    display: none;
+  }
+}
 .plan-button:active:not(.disabled) {
-  background: rgba(57, 57, 184, 0.5647058824);
+  background: rgba(106, 106, 255, 0.5647058824);
+  border-radius: 6px;
 }
 
 .plan-button:hover:not(.disabled) {
-  background: rgba(57, 57, 184, 0.5647058824);
+  background: rgba(106, 106, 255, 0.5647058824);
+  border-radius: 6px;
+}
+
+div {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.submit-button:active {
+  color: rgba(106, 106, 255, 0.5647058824);
 }
 
 #plan-list-selector::-webkit-scrollbar {
@@ -25,8 +111,8 @@
 }
 
 a.disabled {
-  border-color: gray;
-  color: gray;
+  border-color: rgba(106, 106, 255, 0.2588235294);
+  color: rgba(106, 106, 255, 0.2588235294);
 }
 
 /*# sourceMappingURL=index.css.map */

@@ -1,14 +1,26 @@
-@use 'header';
+@use 'loadingAnimation';
 @use 'radioInput';
 
 $fairster-blue: #3939b8;
-$fairster-blue-light: #3939b890;
+$fairster-blue-light: #6a6aff90;
+$color-disabled: #6a6aff42;
 
 .plan-button:active:not(.disabled) {
   background: $fairster-blue-light;
+  border-radius: 6px;
 }
 .plan-button:hover:not(.disabled) {
   background: $fairster-blue-light;
+  border-radius: 6px;
+}
+
+div {
+  -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.submit-button:active {
+  color: $fairster-blue-light;
 }
 
 
@@ -31,6 +43,6 @@ $fairster-blue-light: #3939b890;
 }
 
 a.disabled {
-  border-color: gray;
-  color: gray;
+  border-color: $color-disabled;
+  color: $color-disabled;
 }
