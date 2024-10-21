@@ -17,6 +17,7 @@ const availableContractPlans = [
   },
 ];
 const contractState = {
+  id: null,
   selectedPlan: "2nd-tarif-tile",
 };
 let contractNameElement: HTMLElement;
@@ -45,6 +46,16 @@ type DataResponseType = {
 
 const onSubmit = async () => {
   console.log("On Submit", contractState);
+
+  let result = await fetch(`${apiUrl}/offer/${contractState.id}`, {
+    method: "POST",
+    body: JSON.stringify(contractState),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  document.getElementById("loading-cover").classList.remove("hide");
 };
 
 export async function init() {
@@ -86,6 +97,7 @@ export async function init() {
 const loadContractDetails = async () => {
   let offerId = window.location.hash;
   offerId = offerId.slice(1, offerId.length);
+  contractState.id = offerId;
 
   const contractDataResponse = await fetch(`${apiUrl}/offer/${offerId}`, {});
   const contractData: DataResponseType = await contractDataResponse.json();

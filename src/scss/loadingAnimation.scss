@@ -20,6 +20,10 @@
   animation: hide 0.8s forwards;
 }
 
+#loading-cover.hide {
+  animation: show 0.8s forwards;
+}
+
 @keyframes bounce {
   0% {
       transform: translateY(0);
@@ -36,5 +40,15 @@
     100% {
       opacity: 0%;
       display: none;
+  }
+}
+
+@keyframes show {
+  0% {
+    opacity: 0%;
+    display: block;
+  }
+  100% {
+      opacity: 100%;
   }
 }
