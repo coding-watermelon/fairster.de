@@ -1,3 +1,5 @@
+import { calculatePrice } from "./priceCalculation";
+
 const apiUrl = "http://localhost:3333";
 const availableContractPlans = [
   {
@@ -19,6 +21,7 @@ const availableContractPlans = [
 const contractState = {
   id: null,
   selectedPlan: "2nd-tarif-tile",
+  calculation: null,
 };
 let contractNameElement: HTMLElement;
 let contractAddressElement: HTMLElement;
@@ -80,8 +83,6 @@ export async function init() {
   }
   document.getElementById("loading-cover").classList.add("hide");
 
-  console.log("Done loading");
-
   // Register events
   document
     .getElementById("plan-nav-left")
@@ -108,11 +109,43 @@ const loadContractDetails = async () => {
     "contract-data-delivery-address"
   );
   contractMeterIdElement = document.getElementById("contract-data-meter-id");
+  const calculatedPrices = calculatePrice(
+    contractData.zipCode,
+    contractData.yearlyConsumptionKwH,
+    "private"
+  );
+  contractState.calculation = calculatedPrices;
 
   contractNameElement.innerHTML = `${contractData.user.firstName} ${contractData.user.lastName}`;
   contractAddressElement.innerHTML = contractData.user.invoiceAddress;
   contractDeliveryAddressElement.innerHTML = contractData.user.deliveryAddress;
   contractMeterIdElement.innerHTML = contractData.user.meterId;
+
+  // // Set Price Data
+  getElementByXpath(
+    '//*[@id="2nd-tarif-tile"]/div[4]'
+  ).innerHTML = `${calculatedPrices.abschlag} EUR / Monat`;
+  getElementByXpath(
+    '//*[@id="3rd-tarif-tile"]/div[4]'
+  ).innerHTML = `${calculatedPrices.abschlag} EUR / Monat`;
+  getElementByXpath(
+    '//*[@id="1st-tarif-tile"]/div[3]'
+  ).innerHTML = `Arbeitspreis ${calculatedPrices.arbeitspreis} ct/KwH - Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
+  getElementByXpath(
+    '//*[@id="2nd-tarif-tile"]/div[3]'
+  ).innerHTML = `Arbeitspreis ${calculatedPrices.arbeitspreis} ct/KwH - Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
+  getElementByXpath(
+    '//*[@id="3rd-tarif-tile"]/div[3]'
+  ).innerHTML = `Arbeitspreis ${calculatedPrices.arbeitspreis} ct/KwH - Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
+  getElementByXpath(
+    '//*[@id="1st-tarif-tile"]/div[2]'
+  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
+  getElementByXpath(
+    '//*[@id="2nd-tarif-tile"]/div[2]'
+  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
+  getElementByXpath(
+    '//*[@id="3rd-tarif-tile"]/div[2]'
+  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
 };
 
 const updatePlanList = (initial: boolean) => {
@@ -160,3 +193,13 @@ const navigatePlans = (direction: number) => (event) => {
 const wait = async (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
+
+function getElementByXpath(path): HTMLElement {
+  return document.evaluate(
+    path,
+    document,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  ).singleNodeValue as HTMLElement;
+}
