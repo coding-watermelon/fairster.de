@@ -113,7 +113,7 @@ const loadContractDetails = async () => {
   const calculatedPrices = calculatePrice(
     contractData.zipCode,
     contractData.yearlyConsumptionKwH,
-    "private"
+    contractData.plan as "commercial" | "private" | "heat"
   );
   contractState.calculation = calculatedPrices;
 
