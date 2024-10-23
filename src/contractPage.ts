@@ -1,6 +1,7 @@
 import { calculatePrice } from "./priceCalculation";
 
-const apiUrl = "http://localhost:3333";
+// const apiUrl = "http://localhost:3333";
+const apiUrl = "http://fairster.code8.dev";
 const availableContractPlans = [
   {
     id: "1st-tarif-tile",
