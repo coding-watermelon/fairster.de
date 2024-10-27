@@ -20,7 +20,7 @@
   animation: hide 0.8s forwards;
 }
 
-#loading-cover.hide {
+#loading-cover:not(.hide) {
   animation: show 0.8s forwards;
 }
 

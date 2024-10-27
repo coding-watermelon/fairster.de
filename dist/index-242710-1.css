@@ -56,6 +56,10 @@
   animation: hide 0.8s forwards;
 }
 
+#loading-cover:not(.hide) {
+  animation: show 0.8s forwards;
+}
+
 @keyframes bounce {
   0% {
     transform: translateY(0);
@@ -71,6 +75,15 @@
   100% {
     opacity: 0%;
     display: none;
+  }
+}
+@keyframes show {
+  0% {
+    opacity: 0%;
+    display: block;
+  }
+  100% {
+    opacity: 100%;
   }
 }
 .plan-button:active:not(.disabled) {
@@ -113,6 +126,22 @@ div {
 a.disabled {
   border-color: rgba(106, 106, 255, 0.2588235294);
   color: rgba(106, 106, 255, 0.2588235294);
+}
+
+#legal-consent-check.highlight {
+  animation: highlightError 1.2s forwards;
+}
+
+@keyframes highlightError {
+  0% {
+    color: black;
+  }
+  50% {
+    color: #ff8686;
+  }
+  100% {
+    color: black;
+  }
 }
 
 /*# sourceMappingURL=index.css.map */

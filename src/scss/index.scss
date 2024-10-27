@@ -4,6 +4,7 @@
 $fairster-blue: #3939b8;
 $fairster-blue-light: #6a6aff90;
 $color-disabled: #6a6aff42;
+$color-highlight: #ff8686;
 
 .plan-button:active:not(.disabled) {
   background: $fairster-blue-light;
@@ -45,4 +46,20 @@ div {
 a.disabled {
   border-color: $color-disabled;
   color: $color-disabled;
+}
+
+#legal-consent-check.highlight {
+  animation: highlightError 1.2s forwards;
+}
+
+@keyframes highlightError {
+  0% {
+      color: black;
+    }
+  50% {
+    color: $color-highlight;
+  }
+  100% {
+    color: black;
+  }
 }

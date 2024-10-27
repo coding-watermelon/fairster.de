@@ -1,7 +1,8 @@
 import { calculatePrice } from "./priceCalculation";
 
-// const apiUrl = "http://localhost:3333";
-const apiUrl = "https://fairster.code8.dev";
+// const apiUrl = "http://localhost:3334";
+// const apiUrl = "https://fairster.code8.dev";
+const apiUrl = "https://fairster-backend.azurewebsites.net/api";
 const availableContractPlans = [
   {
     id: "1st-tarif-tile",
@@ -19,24 +20,24 @@ const availableContractPlans = [
     buttonSelectorId: "24-months-select-button",
   },
 ];
+const idPlanMapping = {
+  "1st-tarif-tile": "1 Monats Tarif",
+  "2nd-tarif-tile": "12 Monats Tarif",
+  "3rd-tarif-tile": "24 Monats Tarif",
+};
 const contractState = {
   id: null,
   selectedPlan: "2nd-tarif-tile",
   calculation: null,
+  planType: "",
 };
-let contractNameElement: HTMLElement;
-let contractAddressElement: HTMLElement;
-let contractDeliveryAddressElement: HTMLElement;
-let contractMeterIdElement: HTMLElement;
-let planListElement: HTMLElement;
-let selectedPlanNameElement: HTMLElement;
-
 type DataResponseType = {
   id: string;
   email: string;
   plan: string;
   zipCode: string;
   yearlyConsumptionKwH: number;
+  status: string;
   user: {
     id: string;
     email: string;
@@ -47,18 +48,39 @@ type DataResponseType = {
     meterId: string;
   };
 };
+let contractData: DataResponseType = null;
+let contractNameElement: HTMLElement;
+let contractAddressElement: HTMLElement;
+let contractDeliveryAddressElement: HTMLElement;
+let contractMeterIdElement: HTMLElement;
+let planListElement: HTMLElement;
+let selectedPlanNameElement: HTMLElement;
 
 const onSubmit = async () => {
   console.log("On Submit", contractState);
-
+  if (
+    (document.getElementById("legal-consent-checkbox") as HTMLFormElement)
+      .checked == false
+  ) {
+    document.getElementById("legal-consent-check").classList.add("highlight");
+    await wait(2000);
+    document
+      .getElementById("legal-consent-check")
+      .classList.remove("highlight");
+    return;
+  }
   let result = await fetch(`${apiUrl}/offer/${contractState.id}`, {
     method: "POST",
-    body: JSON.stringify(contractState),
+    body: JSON.stringify({
+      contractState,
+      selectedPlan: idPlanMapping[contractState.selectedPlan],
+    }),
     headers: {
       "Content-Type": "application/json",
     },
   });
 
+  document.getElementById("loading-subheader").innerHTML = "Angebot bestätigt";
   document.getElementById("loading-cover").classList.remove("hide");
 };
 
@@ -67,7 +89,6 @@ export async function init() {
   if (window.location.pathname !== "/contract") return;
 
   let hasSeenLoadingForAtLeastTwoSeconds = false;
-  console.log("Init contract page");
   // Load Contract Details
   setTimeout(() => {
     hasSeenLoadingForAtLeastTwoSeconds = true;
@@ -82,7 +103,12 @@ export async function init() {
   while (!hasSeenLoadingForAtLeastTwoSeconds) {
     await wait(200);
   }
-  document.getElementById("loading-cover").classList.add("hide");
+  if (contractData.status !== "signed") {
+    document.getElementById("loading-cover").classList.add("hide");
+  } else {
+    document.getElementById("loading-subheader").innerHTML =
+      "Angebot bereits bestätigt";
+  }
 
   // Register events
   document
@@ -102,7 +128,7 @@ const loadContractDetails = async () => {
   contractState.id = offerId;
 
   const contractDataResponse = await fetch(`${apiUrl}/offer/${offerId}`, {});
-  const contractData: DataResponseType = await contractDataResponse.json();
+  contractData = await contractDataResponse.json();
 
   contractNameElement = document.getElementById("contract-data-name");
   contractAddressElement = document.getElementById("contract-data-address");
@@ -116,37 +142,42 @@ const loadContractDetails = async () => {
     contractData.plan as "commercial" | "private" | "heat"
   );
   contractState.calculation = calculatedPrices;
+  contractState.planType = contractData.plan;
 
   contractNameElement.innerHTML = `${contractData.user.firstName} ${contractData.user.lastName}`;
   contractAddressElement.innerHTML = contractData.user.invoiceAddress;
   contractDeliveryAddressElement.innerHTML = contractData.user.deliveryAddress;
   contractMeterIdElement.innerHTML = contractData.user.meterId;
 
+  let netSuffix = "";
+  if (contractData.plan == "commercial") {
+    netSuffix = "(netto)";
+  }
   // // Set Price Data
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[4]'
-  ).innerHTML = `${calculatedPrices.abschlag} EUR / Monat`;
+  ).innerHTML = `${calculatedPrices.abschlag} EUR / Monat ${netSuffix}`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[4]'
-  ).innerHTML = `${calculatedPrices.abschlag} EUR / Monat`;
-  getElementByXpath(
-    '//*[@id="1st-tarif-tile"]/div[3]'
-  ).innerHTML = `Arbeitspreis ${calculatedPrices.arbeitspreis} ct/KwH - Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
+  ).innerHTML = `${calculatedPrices.abschlag} EUR / Monat ${netSuffix}`;
+  // getElementByXpath(
+  //   '//*[@id="1st-tarif-tile"]/div[3]'
+  // ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[3]'
-  ).innerHTML = `Arbeitspreis ${calculatedPrices.arbeitspreis} ct/KwH - Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
+  ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr ${netSuffix}`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[3]'
-  ).innerHTML = `Arbeitspreis ${calculatedPrices.arbeitspreis} ct/KwH - Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
-  getElementByXpath(
-    '//*[@id="1st-tarif-tile"]/div[2]'
-  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
+  ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr ${netSuffix}`;
+  // getElementByXpath(
+  //   '//*[@id="1st-tarif-tile"]/div[2]'
+  // ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[2]'
-  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
+  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH ${netSuffix}`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[2]'
-  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
+  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH ${netSuffix}`;
 };
 
 const updatePlanList = (initial: boolean) => {
@@ -173,10 +204,19 @@ const updatePlanList = (initial: boolean) => {
 };
 
 const selectPlan = (planId: string) => (event) => {
-  console.log("Select Plan", planId);
+  if (planId == "1st-tarif-tile") {
+    document.getElementById("contract-form-submit").innerHTML =
+      "Tarif anfragen";
+  } else {
+    document.getElementById("contract-form-submit").innerHTML =
+      "Kostenpflichtig <br>abschließen<br>‍";
+  }
 
   contractState.selectedPlan = planId;
   updatePlanList(false);
+  document
+    .getElementById("contract-form-submit")
+    .scrollIntoView({ behavior: "smooth" });
 };
 
 const navigatePlans = (direction: number) => (event) => {
