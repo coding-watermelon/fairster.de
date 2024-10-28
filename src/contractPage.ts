@@ -155,7 +155,7 @@ const loadContractDetails = async () => {
   contractDeliveryAddressElement.innerHTML = contractData.user.deliveryAddress;
   contractMeterIdElement.innerHTML = contractData.user.meterId;
 
-  let netSuffix = "";
+  let netSuffix = "inkl. Mwst";
   if (contractData.plan == "commercial") {
     netSuffix = "(netto)";
   }
