@@ -1,6 +1,6 @@
 import { slp, wp } from "./priceData";
 
-const priceConstants = {
+const priceConstants2024 = {
   private: {
     producer: 10.888,
     structuringBudget: 0.7493420625,
@@ -12,6 +12,20 @@ const priceConstants = {
   heat: {
     producer: 10.888,
     structuringBudget: 0.579749999999999,
+  },
+};
+export const priceConstants2025 = {
+  private: {
+    producer: 6.5,
+    structuringBudget: 2.22,
+  },
+  commercial: {
+    producer: 6.5,
+    structuringBudget: 2.85,
+  },
+  heat: {
+    producer: 6.5,
+    structuringBudget: 2.11,
   },
 };
 const ADMINISTRATIVE_SURCHARGE_FACTOR = 0.05;
@@ -27,8 +41,12 @@ type PriceResultType = {
 export const calculatePrice = (
   zipCode: string,
   consumptionKwH: number,
-  type: "commercial" | "private" | "heat"
+  type: "commercial" | "private" | "heat",
+  priceConstants?
 ): PriceResultType | null => {
+  if (typeof priceConstants == "undefined") {
+    priceConstants = priceConstants2024;
+  }
   const dataSource = type != "heat" ? slp : wp;
   let [workingPricePerKwH, basePricePerKwH] = dataSource[zipCode] || [];
   console.log("Prices", basePricePerKwH);

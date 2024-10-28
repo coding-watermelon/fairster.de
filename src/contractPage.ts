@@ -1,4 +1,4 @@
-import { calculatePrice } from "./priceCalculation";
+import { calculatePrice, priceConstants2025 } from "./priceCalculation";
 
 // const apiUrl = "http://localhost:3334";
 // const apiUrl = "https://fairster.code8.dev";
@@ -139,10 +139,16 @@ const loadContractDetails = async () => {
   const calculatedPrices = calculatePrice(
     contractData.zipCode,
     contractData.yearlyConsumptionKwH,
-    contractData.plan as "commercial" | "private" | "heat"
+    contractData.plan as "commercial" | "private" | "heat",
+    priceConstants2025
   );
   contractState.calculation = calculatedPrices;
   contractState.planType = contractData.plan;
+
+  if (contractData.plan == "commercial") {
+    (document.getElementById("legal-terms-link") as HTMLAnchorElement).href =
+      "https://cdn.shopify.com/s/files/1/0742/1381/8632/files/AGB_Fairster_Gewerbekunden_final.pdf?v=1729868928";
+  }
 
   contractNameElement.innerHTML = `${contractData.user.firstName} ${contractData.user.lastName}`;
   contractAddressElement.innerHTML = contractData.user.invoiceAddress;
