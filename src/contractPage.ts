@@ -30,6 +30,7 @@ const contractState = {
   selectedPlan: "2nd-tarif-tile",
   calculation: null,
   planType: "",
+  legalConsents: [],
 };
 type DataResponseType = {
   id: string;
@@ -57,7 +58,6 @@ let planListElement: HTMLElement;
 let selectedPlanNameElement: HTMLElement;
 
 const onSubmit = async () => {
-  console.log("On Submit", contractState);
   if (
     (document.getElementById("legal-consent-checkbox") as HTMLFormElement)
       .checked == false
@@ -69,6 +69,12 @@ const onSubmit = async () => {
       .classList.remove("highlight");
     return;
   }
+  contractState.legalConsents = [
+    getElementByXpath('//*[@id="legal-consent-check"]/span').innerText,
+    getElementByXpath('//*[@id="wf-form-contractForm"]/section[5]/div')
+      .innerText,
+  ];
+
   let result = await fetch(`${apiUrl}/offer/${contractState.id}`, {
     method: "POST",
     body: JSON.stringify({
@@ -79,7 +85,11 @@ const onSubmit = async () => {
       "Content-Type": "application/json",
     },
   });
-
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "smooth",
+  });
   document.getElementById("loading-subheader").innerHTML = "Angebot bestätigt";
   document.getElementById("loading-cover").classList.remove("hide");
 };
@@ -155,35 +165,42 @@ const loadContractDetails = async () => {
   contractDeliveryAddressElement.innerHTML = contractData.user.deliveryAddress;
   contractMeterIdElement.innerHTML = contractData.user.meterId;
 
-  let netSuffix = "inkl. Mwst";
+  let netSuffix = "Preise inkl. MwSt";
   if (contractData.plan == "commercial") {
-    netSuffix = "(netto)";
+    netSuffix = "Preise exkl. MwSt";
   }
   // // Set Price Data
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[4]'
-  ).innerHTML = `${calculatedPrices.abschlag} EUR / Monat ${netSuffix}`;
+  ).innerHTML = `<b>${calculatedPrices.abschlag} EUR / Monat </b><br/>inkl. ${calculatedPrices.baseFee} EUR Grundgebühr`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[4]'
-  ).innerHTML = `${calculatedPrices.abschlag} EUR / Monat ${netSuffix}`;
+  ).innerHTML = `<b>${calculatedPrices.abschlag} EUR / Monat</b><br/>inkl. ${calculatedPrices.baseFee} EUR Grundgebühr`;
   // getElementByXpath(
   //   '//*[@id="1st-tarif-tile"]/div[3]'
   // ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[3]'
-  ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr ${netSuffix}`;
+  ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[3]'
-  ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr ${netSuffix}`;
+  ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
   // getElementByXpath(
   //   '//*[@id="1st-tarif-tile"]/div[2]'
   // ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[2]'
-  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH ${netSuffix}`;
+  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[2]'
-  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH ${netSuffix}`;
+  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
+
+  getElementByXpath(
+    '//*[@id="2nd-tarif-tile"]/div[5]'
+  ).innerHTML = `Abschlag abhängig von deinem aktuellen Verbrauch <br/> ${netSuffix}`;
+  getElementByXpath(
+    '//*[@id="3rd-tarif-tile"]/div[5]'
+  ).innerHTML = `Abschlag abhängig von deinem aktuellen Verbrauch <br/> ${netSuffix}`;
 };
 
 const updatePlanList = (initial: boolean) => {

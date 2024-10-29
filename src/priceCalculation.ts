@@ -37,6 +37,7 @@ type PriceResultType = {
   grundpreis: number;
   abschlag: number;
   erstattung: number;
+  baseFee: number;
 };
 export const calculatePrice = (
   zipCode: string,
@@ -70,8 +71,11 @@ export const calculatePrice = (
     Math.round(parseFloat(basePricePerKwH) * vatFactor * 100) / 100;
 
   // Monthly Fee
+  const baseFee = Math.floor(4.2 * vatFactor * 100) / 100;
   const yearlyConsumption =
-    basePricePerKwHGross + (workingPricePerKwHGross / 100) * consumptionKwH;
+    basePricePerKwHGross +
+    (workingPricePerKwHGross / 100) * consumptionKwH +
+    baseFee;
   const monthlyFee = Math.round((yearlyConsumption / 12) * 100) / 100;
 
   // Refund
@@ -84,5 +88,6 @@ export const calculatePrice = (
     grundpreis: basePricePerKwHGross,
     abschlag: monthlyFee,
     erstattung: refund,
+    baseFee: baseFee,
   };
 };
