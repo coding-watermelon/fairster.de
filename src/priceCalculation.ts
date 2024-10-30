@@ -75,7 +75,7 @@ export const calculatePrice = (
   const yearlyConsumption =
     basePricePerKwHGross +
     (workingPricePerKwHGross / 100) * consumptionKwH +
-    baseFee;
+    baseFee * 12;
   const monthlyFee = Math.round((yearlyConsumption / 12) * 100) / 100;
 
   // Refund

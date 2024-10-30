@@ -21,6 +21,7 @@ const availableContractPlans = [
   },
 ];
 const idPlanMapping = {
+  "heatpump-tarif-tile": "Wärmepumpen Tarif",
   "1st-tarif-tile": "1 Monats Tarif",
   "2nd-tarif-tile": "12 Monats Tarif",
   "3rd-tarif-tile": "24 Monats Tarif",
@@ -169,38 +170,46 @@ const loadContractDetails = async () => {
   if (contractData.plan == "commercial") {
     netSuffix = "Preise exkl. MwSt";
   }
+
+  let monthlyFeeWithBase = formatDecimal(
+    (calculatedPrices.grundpreis + calculatedPrices.baseFee * 12) / 12
+  );
   // // Set Price Data
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[4]'
-  ).innerHTML = `<b>${calculatedPrices.abschlag} EUR / Monat </b><br/>inkl. ${calculatedPrices.baseFee} EUR Grundgebühr`;
+  ).innerHTML = `Abschlag  <b>${formatDecimal(
+    calculatedPrices.abschlag
+  )} EUR / Monat </b>`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[4]'
-  ).innerHTML = `<b>${calculatedPrices.abschlag} EUR / Monat</b><br/>inkl. ${calculatedPrices.baseFee} EUR Grundgebühr`;
+  ).innerHTML = `Abschlag <b>${formatDecimal(
+    calculatedPrices.abschlag
+  )} EUR / Monat</b>`;
   // getElementByXpath(
   //   '//*[@id="1st-tarif-tile"]/div[3]'
   // ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[3]'
-  ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
+  ).innerHTML = `Grundgebühr ${monthlyFeeWithBase} EUR / Monat`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[3]'
-  ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
+  ).innerHTML = `Grundgebühr ${monthlyFeeWithBase} EUR / Monat`;
   // getElementByXpath(
   //   '//*[@id="1st-tarif-tile"]/div[2]'
   // ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[2]'
-  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
+  ).innerHTML = `${formatDecimal(calculatedPrices.arbeitspreis)} ct/kWh`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[2]'
-  ).innerHTML = `${calculatedPrices.arbeitspreis} ct/KwH`;
+  ).innerHTML = `${formatDecimal(calculatedPrices.arbeitspreis)} ct/kWh`;
 
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[5]'
-  ).innerHTML = `Abschlag abhängig von deinem aktuellen Verbrauch <br/> ${netSuffix}`;
+  ).innerHTML = `Abhängig von deinem aktuellen Verbrauch <br/> ${netSuffix}`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[5]'
-  ).innerHTML = `Abschlag abhängig von deinem aktuellen Verbrauch <br/> ${netSuffix}`;
+  ).innerHTML = `Abhängig von deinem aktuellen Verbrauch <br/> ${netSuffix}`;
 };
 
 const updatePlanList = (initial: boolean) => {
@@ -227,7 +236,7 @@ const updatePlanList = (initial: boolean) => {
 };
 
 const selectPlan = (planId: string) => (event) => {
-  if (planId == "1st-tarif-tile") {
+  if (planId == "1st-tarif-tile" || planId == "heatpump-tarif-tile") {
     document.getElementById("contract-form-submit").innerHTML =
       "Tarif anfragen";
   } else {
@@ -266,4 +275,9 @@ function getElementByXpath(path): HTMLElement {
     XPathResult.FIRST_ORDERED_NODE_TYPE,
     null
   ).singleNodeValue as HTMLElement;
+}
+
+function formatDecimal(numberValue: number) {
+  // @ts-ignore
+  return numberValue.toFixed(2).toLocaleString("de-DE").replace(".", ",");
 }
