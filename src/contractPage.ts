@@ -5,6 +5,11 @@ import { calculatePrice, priceConstants2025 } from "./priceCalculation";
 const apiUrl = "https://fairster-backend.azurewebsites.net/api";
 const availableContractPlans = [
   {
+    id: "heatpump-tarif-tile",
+    name: "Wärmepumpen Tarif",
+    buttonSelectorId: "heat-select-button",
+  },
+  {
     id: "1st-tarif-tile",
     name: "1 Monats Tarif",
     buttonSelectorId: "one-month-select-button",
@@ -32,6 +37,12 @@ const contractState = {
   calculation: null,
   planType: "",
   legalConsents: [],
+  legalTerms: {
+    vertragsbedingungen: "",
+    allgStromlieferbedingungen: "",
+    preisBestimmungen: "",
+    widerrufsrecht: "",
+  },
 };
 type DataResponseType = {
   id: string;
@@ -120,6 +131,7 @@ export async function init() {
     document.getElementById("loading-subheader").innerHTML =
       "Angebot bereits bestätigt";
   }
+  console.log("Got data and ready");
 
   // Register events
   document
@@ -158,8 +170,30 @@ const loadContractDetails = async () => {
 
   if (contractData.plan == "commercial") {
     (document.getElementById("legal-terms-link") as HTMLAnchorElement).href =
-      "https://cdn.shopify.com/s/files/1/0742/1381/8632/files/AGB_Fairster_Gewerbekunden_final.pdf?v=1729868928";
+      "https://cdn.shopify.com/s/files/1/0742/1381/8632/files/Stromliefervertrag_fairster_online_Gewerbekunden.pdf?v=1730393629";
+    (document.getElementById("delivery-terms-link") as HTMLAnchorElement).href =
+      "https://cdn.shopify.com/s/files/1/0742/1381/8632/files/ALB_Anlage_1_fairster_Gewerbekunden.pdf?v=1730393629";
+    (document.getElementById("price-terms-link") as HTMLAnchorElement).href =
+      "https://cdn.shopify.com/s/files/1/0742/1381/8632/files/Anlage_2_fairster_Preisblatt_Gewerbekunden.pdf?v=1730393628";
+    (
+      document.getElementById(
+        "delivery-legal-terms-footer"
+      ) as HTMLAnchorElement
+    ).href =
+      "https://cdn.shopify.com/s/files/1/0742/1381/8632/files/ALB_Anlage_1_fairster_Gewerbekunden.pdf?v=1730393629";
   }
+  contractState.legalTerms.vertragsbedingungen = (
+    document.getElementById("legal-terms-link") as HTMLAnchorElement
+  ).href;
+  contractState.legalTerms.allgStromlieferbedingungen = (
+    document.getElementById("delivery-terms-link") as HTMLAnchorElement
+  ).href;
+  contractState.legalTerms.preisBestimmungen = (
+    document.getElementById("price-terms-link") as HTMLAnchorElement
+  ).href;
+  contractState.legalTerms.widerrufsrecht = (
+    document.getElementById("widerruf-legal-terms") as HTMLAnchorElement
+  ).href;
 
   contractNameElement.innerHTML = `${contractData.user.firstName} ${contractData.user.lastName}`;
   contractAddressElement.innerHTML = contractData.user.invoiceAddress;
@@ -252,12 +286,19 @@ const selectPlan = (planId: string) => (event) => {
 };
 
 const navigatePlans = (direction: number) => (event) => {
-  console.log("Navigate plan", direction);
   if (!planListElement) return;
+
   const listWidth = planListElement.offsetWidth;
   const currentScrollPosition = planListElement.scrollLeft;
+  let newScrollPosition = currentScrollPosition + listWidth * direction;
+  if (newScrollPosition >= listWidth * availableContractPlans.length) {
+    newScrollPosition = 0;
+  } else if (newScrollPosition < 0) {
+    newScrollPosition = listWidth * (availableContractPlans.length - 1);
+  }
+
   planListElement.scrollTo({
-    left: currentScrollPosition + listWidth * direction,
+    left: newScrollPosition,
     top: 0,
     behavior: "smooth",
   });
