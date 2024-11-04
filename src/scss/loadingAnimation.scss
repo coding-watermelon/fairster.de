@@ -18,6 +18,7 @@
 
 #loading-cover.hide {
   animation: hide 0.8s forwards;
+  pointer-events: none !important;
 }
 
 #loading-cover:not(.hide) {

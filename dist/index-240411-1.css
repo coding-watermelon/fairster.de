@@ -1,0 +1,148 @@
+.logo-deconstructed:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.logo-deconstructed:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.logo-deconstructed:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.logo-deconstructed:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.logo-deconstructed:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.logo-deconstructed:nth-child(6) {
+  animation-delay: 0.6s;
+}
+.logo-deconstructed:nth-child(7) {
+  animation-delay: 0.7s;
+}
+.logo-deconstructed:nth-child(8) {
+  animation-delay: 0.8s;
+}
+
+.letter {
+  position: relative;
+  animation: bounce 0.6s infinite alternate;
+}
+.letter:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.letter:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.letter:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.letter:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.letter:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.letter:nth-child(6) {
+  animation-delay: 0.6s;
+}
+.letter:nth-child(7) {
+  animation-delay: 0.7s;
+}
+.letter:nth-child(8) {
+  animation-delay: 0.8s;
+}
+
+#loading-cover.hide {
+  animation: hide 0.8s forwards;
+  pointer-events: none !important;
+}
+
+#loading-cover:not(.hide) {
+  animation: show 0.8s forwards;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-20px);
+  }
+}
+@keyframes hide {
+  0% {
+    opacity: 100%;
+  }
+  100% {
+    opacity: 0%;
+    display: none;
+  }
+}
+@keyframes show {
+  0% {
+    opacity: 0%;
+    display: block;
+  }
+  100% {
+    opacity: 100%;
+  }
+}
+.plan-button:active:not(.disabled) {
+  background: rgba(106, 106, 255, 0.5647058824);
+  border-radius: 6px;
+}
+
+.plan-button:hover:not(.disabled) {
+  background: rgba(106, 106, 255, 0.5647058824);
+  border-radius: 6px;
+}
+
+div {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.submit-button:active {
+  color: rgba(106, 106, 255, 0.5647058824);
+}
+
+#plan-list-selector::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#plan-list-selector {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+#plan-list-selector {
+  scroll-snap-type: x mandatory;
+}
+
+#plan-list-selector > div {
+  scroll-snap-align: start;
+}
+
+a.disabled {
+  border-color: rgba(106, 106, 255, 0.2588235294);
+  color: rgba(106, 106, 255, 0.2588235294);
+}
+
+#legal-consent-check.highlight {
+  animation: highlightError 1.2s forwards;
+}
+
+@keyframes highlightError {
+  0% {
+    color: black;
+  }
+  50% {
+    color: #ff8686;
+  }
+  100% {
+    color: black;
+  }
+}
+
+/*# sourceMappingURL=index.css.map */
