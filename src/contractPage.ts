@@ -143,6 +143,11 @@ export async function init() {
   document
     .getElementById("contract-form-submit")
     .addEventListener("click", onSubmit);
+
+  availableContractPlans.map(({ id, buttonSelectorId, name }, index) => {
+    let button = document.getElementById(buttonSelectorId) as HTMLLinkElement;
+    button.classList.remove("disabled");
+  });
 }
 
 const loadContractDetails = async () => {
