@@ -1,4 +1,4 @@
-import { slp, wp } from "./priceData";
+import { slp, slp2025, wp } from "./priceData";
 
 const priceConstants2024 = {
   private: {
@@ -43,12 +43,17 @@ export const calculatePrice = (
   zipCode: string,
   consumptionKwH: number,
   type: "commercial" | "private" | "heat",
-  priceConstants?
+  priceConstants?,
+  newPrices?: boolean
 ): PriceResultType | null => {
   if (typeof priceConstants == "undefined") {
     priceConstants = priceConstants2024;
   }
-  const dataSource = type != "heat" ? slp : wp;
+  let dataSource = type != "heat" ? slp : wp;
+  if (type != "heat" && newPrices) {
+    // @ts-ignore
+    dataSource = slp2025;
+  }
   let [workingPricePerKwH, basePricePerKwH] = dataSource[zipCode] || [];
   console.log("Prices", basePricePerKwH);
   let vatFactor = type == "commercial" ? 1 : VAT;
