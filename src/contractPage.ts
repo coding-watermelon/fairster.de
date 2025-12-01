@@ -1,8 +1,4 @@
-import {
-  calculatePrice,
-  priceConstants2025,
-  priceConstants2026,
-} from './priceCalculation';
+import { calculatePrice, priceConstants2026 } from './priceCalculation';
 
 // const apiUrl = "http://localhost:3334";
 // const apiUrl = "https://fairster.code8.dev";
