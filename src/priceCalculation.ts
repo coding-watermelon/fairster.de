@@ -1,4 +1,4 @@
-import { slp, slp2025, wp } from "./priceData";
+import { slp, slp2025, wp } from './priceData';
 
 const priceConstants2024 = {
   private: {
@@ -28,6 +28,20 @@ export const priceConstants2025 = {
     structuringBudget: 2.11,
   },
 };
+export const priceConstants2026 = {
+  private: {
+    producer: 6.5,
+    structuringBudget: 2.93,
+  },
+  commercial: {
+    producer: 6.5,
+    structuringBudget: 3.01,
+  },
+  heat: {
+    producer: 6.5,
+    structuringBudget: 2.36,
+  },
+};
 const ADMINISTRATIVE_SURCHARGE_FACTOR = 0.05;
 const ESTIMATED_REFUND_FACTOR = 0.5;
 const VAT = 1.19;
@@ -42,28 +56,28 @@ type PriceResultType = {
 export const calculatePrice = (
   zipCode: string,
   consumptionKwH: number,
-  type: "commercial" | "private" | "heat",
+  type: 'commercial' | 'private' | 'heat',
   priceConstants?,
   newPrices?: boolean
 ): PriceResultType | null => {
-  if (typeof priceConstants == "undefined") {
+  if (typeof priceConstants == 'undefined') {
     priceConstants = priceConstants2024;
   }
-  let dataSource = type != "heat" ? slp : wp;
-  if (type != "heat" && newPrices) {
+  let dataSource = type != 'heat' ? slp : wp;
+  if (type != 'heat' && newPrices) {
     // @ts-ignore
     dataSource = slp2025;
   }
   let [workingPricePerKwH, basePricePerKwH] = dataSource[zipCode] || [];
-  console.log("Prices", basePricePerKwH);
-  let vatFactor = type == "commercial" ? 1 : VAT;
-  if (typeof workingPricePerKwH == "undefined") {
+  console.log('Prices', basePricePerKwH);
+  let vatFactor = type == 'commercial' ? 1 : VAT;
+  if (typeof workingPricePerKwH == 'undefined') {
     return null;
   }
 
   // calculate "Arbeitspreis"
-  const structuringBudget = priceConstants[type]["structuringBudget"];
-  const producingPrice = priceConstants[type]["producer"];
+  const structuringBudget = priceConstants[type]['structuringBudget'];
+  const producingPrice = priceConstants[type]['producer'];
   let workingPricePerKwHNet =
     parseFloat(workingPricePerKwH) +
     (structuringBudget + producingPrice) *
