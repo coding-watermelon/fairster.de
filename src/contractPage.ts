@@ -190,6 +190,12 @@ const loadContractDetails = async () => {
     deliveryHouseNumber
   );
   console.log('Calculated price', calculatedPrices, contractData);
+
+  if (!calculatedPrices) {
+    console.error('Failed to calculate prices');
+    return;
+  }
+
   contractState.calculation = calculatedPrices;
   contractState.planType = contractData.plan;
 
