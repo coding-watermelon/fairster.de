@@ -64,19 +64,48 @@ export const calculatePrice = async (
       'https://fairster-backend.azurewebsites.net/api/plans/calculate',
       {
         method: 'POST',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
         body: JSON.stringify(payload),
       }
     );
+
+    // No content at all
+    if (response.status === 204) {
+      console.error('API call returned 204 No Content');
+      return null;
+    }
 
     if (!response.ok) {
       console.error('API call failed:', response.status, response.statusText);
       return null;
     }
 
-    const data: ApiResponse = await response.json();
+    // Parse body; don't rely on content-type being exposed via CORS
+    const raw = await response.text();
+    if (!raw) {
+      console.error('API call returned empty body', response.status);
+      return null;
+    }
+
+    let data: ApiResponse | null;
+    try {
+      data = JSON.parse(raw);
+    } catch (parseErr) {
+      console.error('API call returned non-JSON or malformed JSON');
+      console.error('Status:', response.status, response.statusText);
+      console.error('Body snippet:', raw.slice(0, 300));
+      return null;
+    }
+
+    if (!data || !data.calculation) {
+      console.error('API call returned no calculation payload');
+      console.error('Body snippet:', raw.slice(0, 300));
+      return null;
+    }
 
     // Map API response to return type using calculation values
     return {
