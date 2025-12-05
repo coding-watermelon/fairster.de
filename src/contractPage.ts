@@ -1,4 +1,4 @@
-import { calculatePrice, priceConstants2026 } from './priceCalculation';
+import { calculatePrice } from './priceCalculation';
 
 // const apiUrl = "http://localhost:3334";
 // const apiUrl = "https://fairster.code8.dev";
@@ -164,12 +164,30 @@ const loadContractDetails = async () => {
     'contract-data-delivery-address'
   );
   contractMeterIdElement = document.getElementById('contract-data-meter-id');
-  const calculatedPrices = calculatePrice(
+
+  // Parse delivery address: "10245 Berlin, Straßmannstrasse 25"
+  let deliveryCity = '';
+  let deliveryStreet = '';
+  let deliveryHouseNumber = '';
+
+  if (contractData.user?.deliveryAddress) {
+    const addressMatch = contractData.user.deliveryAddress.match(
+      /^\d+\s+([^,]+),\s+(.+?)\s+(\d+)$/
+    );
+    if (addressMatch) {
+      deliveryCity = addressMatch[1].trim();
+      deliveryStreet = addressMatch[2].trim();
+      deliveryHouseNumber = addressMatch[3].trim();
+    }
+  }
+
+  const calculatedPrices = await calculatePrice(
     contractData.zipCode,
     contractData.yearlyConsumptionKwH,
     contractData.plan as 'commercial' | 'private' | 'heat',
-    priceConstants2026,
-    true
+    deliveryCity,
+    deliveryStreet,
+    deliveryHouseNumber
   );
   console.log('Calculated price', calculatedPrices, contractData);
   contractState.calculation = calculatedPrices;

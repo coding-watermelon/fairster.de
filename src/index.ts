@@ -3,7 +3,7 @@ import { calculatePrice } from './priceCalculation';
 
 async function main() {
   init();
-  function logSubmit(event) {
+  async function logSubmit(event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -22,11 +22,16 @@ async function main() {
         ) as HTMLInputElement
       ).value,
     };
-    let prices = calculatePrice(
+    let prices = await calculatePrice(
       form.zipCode,
       parseInt(form.consumption),
       form.energyConsumer
     );
+
+    if (!prices) {
+      console.error('Failed to calculate prices');
+      return;
+    }
 
     let pricesNet = form.energyConsumer == 'commercial';
 
