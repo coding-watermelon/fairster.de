@@ -172,7 +172,7 @@ const loadContractDetails = async () => {
 
   if (contractData.user?.deliveryAddress) {
     const addressMatch = contractData.user.deliveryAddress.match(
-      /^\d+\s+([^,]+),\s+(.+?)\s+(\d+)$/
+      /^(.+?)\s+(\d+),\s+\d+\s+(.+)$/
     );
     if (addressMatch) {
       deliveryCity = addressMatch[1].trim();
