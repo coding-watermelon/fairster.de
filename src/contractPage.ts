@@ -175,9 +175,9 @@ const loadContractDetails = async () => {
       /^(.+?)\s+(\d+),\s+\d+\s+(.+)$/
     );
     if (addressMatch) {
-      deliveryCity = addressMatch[1].trim();
-      deliveryStreet = addressMatch[2].trim();
-      deliveryHouseNumber = addressMatch[3].trim();
+      deliveryStreet = addressMatch[1].trim();
+      deliveryHouseNumber = addressMatch[2].trim();
+      deliveryCity = addressMatch[3].trim();
     }
   }
 
