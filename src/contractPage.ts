@@ -240,16 +240,23 @@ const loadContractDetails = async () => {
     (calculatedPrices.grundpreis + calculatedPrices.baseFee * 12) / 12
   );
   // // Set Price Data
+  // getElementByXpath(
+  //   '//*[@id="2nd-tarif-tile"]/div[4]'
+  // ).innerHTML = `Abschlag  <b>${formatDecimal(
+  //   calculatedPrices.abschlag
+  // )} EUR / Monat </b>`;
+  // getElementByXpath(
+  //   '//*[@id="3rd-tarif-tile"]/div[4]'
+  // ).innerHTML = `Abschlag <b>${formatDecimal(
+  //   calculatedPrices.abschlag
+  // )} EUR / Monat</b>`;
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[4]'
-  ).innerHTML = `Abschlag  <b>${formatDecimal(
-    calculatedPrices.abschlag
-  )} EUR / Monat </b>`;
+  ).innerHTML = `Abschlag richtet sich nach deinem aktuellen Verbrauch`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[4]'
-  ).innerHTML = `Abschlag <b>${formatDecimal(
-    calculatedPrices.abschlag
-  )} EUR / Monat</b>`;
+  ).innerHTML = `Abschlag richtet sich nach deinem aktuellen Verbrauch`;
+
   // getElementByXpath(
   //   '//*[@id="1st-tarif-tile"]/div[3]'
   // ).innerHTML = `Grundpreis ${calculatedPrices.grundpreis} EUR / Jahr`;
@@ -271,10 +278,10 @@ const loadContractDetails = async () => {
 
   getElementByXpath(
     '//*[@id="2nd-tarif-tile"]/div[5]'
-  ).innerHTML = `Abhängig von deinem aktuellen Verbrauch <br/> ${netSuffix}`;
+  ).innerHTML = `Wir teilen dir den Abschlag mit der Bestätigung mit`;
   getElementByXpath(
     '//*[@id="3rd-tarif-tile"]/div[5]'
-  ).innerHTML = `Abhängig von deinem aktuellen Verbrauch <br/> ${netSuffix}`;
+  ).innerHTML = `Wir teilen dir den Abschlag mit der Bestätigung mit`;
 };
 
 const updatePlanList = (initial: boolean) => {
@@ -286,6 +293,10 @@ const updatePlanList = (initial: boolean) => {
     }
     let button = document.getElementById(buttonSelectorId) as HTMLLinkElement;
     button.classList.remove('disabled');
+
+    if (id == 'heatpump-tarif-tile') {
+      return;
+    }
     if (id == contractState.selectedPlan) {
       button.classList.add('disabled');
       selectedPlanNameElement.innerHTML = name;
